@@ -1,6 +1,7 @@
 from PIL import Image
 from scipy import misc
 import numpy as np
+import random
 import time
 import os
 import glob
@@ -21,7 +22,8 @@ def encrypt(image):
     # encrypt each value
     for i in range(0, image.size):
         # Test mod encryption
-        d[i] = d[i] % 100
+        # d[i] = d[i] * 1.5
+        d[i] = random.randint(0,255)
     # Counter for images that have been processed
     count += 1
     # Reshaped 1D image into a matrix
