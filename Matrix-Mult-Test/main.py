@@ -17,9 +17,10 @@ aThree = np.array([
                  ])
 
 bThree = np.array([
-                      [[100,101,102], [103,104,105], [106,107,108]]
-                    , [[110,111,112], [113,114,115], [116,117, 118]]
-                    , [[119,120,121], [122,123,124], [125,124,125]]
+                      [[100,101,102,103], [104,105,106,0], [106,107,108,0],  [106,107,108,0]]
+                    , [[110,111,112,0], [113,114,115,0], [116,117, 118,0],  [106,107,108,0]]
+                    , [[119,120,121,0], [122,123,124,0], [125,124,125,0],  [106,107,108,0]]
+                    # , [[126,127,128,0], [129,130,131,0], [132,133,134,0]]
                 ])    
 
 '''
@@ -65,7 +66,36 @@ def makePerfSquare(arr):
                 for k in range(0,3):
                     newarr[i][j][k] = arr[i][j][k] 
         return newarr
-        
+
+def matrix_mult(arr):
+    cypher = np.random.random(arr.shape) # Cypher matrix of arr shape
+    aCol = len(arr[0])
+    bCol = len(cypher[0])
+    aRow = len(arr)
+    bRow = len(cypher)
+
+
+    a2 = arr.transpose(2,0,1).reshape(-1, arr.shape[1])
+    c2 = cypher.transpose(2,0,1).reshape(-1, cypher.shape[1])
+
+    r = np.zeros(arr.shape, dtype=int)
+    r2 =  r.transpose(2,0,1).reshape(-1, r.shape[1])
+    result_3d = r2.reshape(np.roll(r2.shape,1)).transpose(1,2,0)
+    
+    print(result)
+    print(result_3d)
+
+    # for i in range(len(arr)):
+    #     for j in range(len(c2[0])):
+    #         for k in range(len(arr[0])):
+    #             result[i][j] += c2[i][k] * a2[k][j]
+    # result_3d = result.reshape(np.roll(result.shape,1)).transpose(1,2,0)    
+    # print(result_3d)
+    # for i in range(0, aRow):
+    #     for j in range(0, bCol):
+    #         for k in range(0, aCol):
+    #             result[i][j] += a2[i][k] * c2[k][j] 
+    # result_3d = r2.reshape(np.roll(r2.shape,1)).transpose(1,2,0)
 
 '''
 Function Calls
@@ -75,8 +105,17 @@ isSquare = isPerfSquare(aThree)
 if(isSquare):
     print('Its a square.')
 else:
+    print(aThree)
+    print('')
+    print('Converting to perfect square..')    
+    print('')    
     sqrArray = makePerfSquare(aThree)
-    print(sqrArray)                                                                                                       
+    print(sqrArray)       
+    print('')
+    print('Multiplying the Matrices')
+    print('')        
+    matrix_mult(sqrArray)      
+
 
 
 
@@ -150,7 +189,7 @@ if aCol == bRow:
     for i in range(0, aRow):
         for j in range(0, bCol):
             for k in range(0, aCol):
-                result[i][j] += aTwo[i][k] * bTwo[k][k] 
+                result[i][j] += aTwo[i][k] * bTwo[k][j] 
     result_3d = result.reshape(np.roll(aThree.shape,1)).transpose(1,2,0)
     print(result_3d)
 
