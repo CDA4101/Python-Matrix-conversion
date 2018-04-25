@@ -1,11 +1,3 @@
-# 3D -> DONE 
-#1D -> DONE
-#Calc nearest Square (SquareRoot + 1 if not a whole # (MOD 10 if not 0 add 1)) -> DONE
-# 2D size of -> DONE
-#Matrix Mult -> 
-#1D -> 
-# 3D -> 
-
 import numpy as np
 import math
 
@@ -48,7 +40,6 @@ makePerfSquare :
     -   return a new perfect square array. Padded with zeros to make 
         the perfect square matric possible
 '''
-
 def makePerfSquare(arr):
     row = len(arr) #rows
     col = len(arr[0]) #columns
@@ -67,24 +58,29 @@ def makePerfSquare(arr):
                     newarr[i][j][k] = arr[i][j][k] 
         return newarr
 
+'''
+matrix_mult:
+    -   Receives an array
+    -   Creates a cypher array which will be used for matrix multiplication
+    -   Saves cypher array into its own list which will later be used for inversion (decryption)
+    -   applies matrix multiplication to image array and cypher array.
+    -   returns new encrypted image array 
+'''
+cypher_list = []
 def matrix_mult(arr):
     cypher = np.random.random(arr.shape) # Cypher matrix of arr shape
+    cypher_list.append(cypher) # Appends cypher to cypher list for matrix inversion
     result = np.zeros(arr.shape) # Cypher matrix of arr shape
 
     a2 = arr.reshape(-1, arr.shape[1])
     c2 = cypher.reshape(-1, cypher.shape[1])
     
     # Matrix multiplication
-    print('Transposed Cypher')
-    print(c2.T)
-    print('Image Array')
-    print(a2)
-    print('')
-    print('RESULT') 
     res = np.dot(a2, c2.T)
-    # fr = res.flatten()
-    # rfr = res.reshape((len(arr),len(arr[0]), len(arr[0][0])))
-    print(res)
+
+    # Reshape 2D -> 3D 
+    res3d = res.reshape(3,-1, 3)
+    return res3d
 
 '''
 Function Calls
@@ -103,7 +99,7 @@ else:
     print('')
     print('Multiplying the Matrices')
     print('')        
-    matrix_mult(aThree)      
+    print(matrix_mult(aThree))      
 
 
 
