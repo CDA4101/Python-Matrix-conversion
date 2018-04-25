@@ -5,8 +5,13 @@ from PIL import Image
 import numpy as np
 import random
 import glob
+import math
 import cv2 
 import os
+
+import pycuda.driver as cuda
+import pycuda.autoinit
+from pycuda.compiler import SourceModule
 
 '''
 Decorator to allow other functions to be exectue after one another
@@ -62,36 +67,85 @@ def framer():
       count += 1
 
 '''
-Cryptr:
-  - TODO
+isPerfSquare:
+    -   Take in a 3D array
+    -   Compares the length of the rows vs columns
+    -   returns a boolean 
+'''                       
+def isPerfSquare(arr):
+    row = len(arr) #rows
+    col = len(arr[0]) #columns
+    # print("Number of rows: ", row,'\n')
+    # print("Number of columns: ", col,'\n')
+    rxc = row - col
+    if(rxc != 0):
+        return(False)
+    return (True)
+
+'''
+makePerfSquare : 
+    -   Takes in a 3D array
+    -   will make the array a perfect square by taking 
+        either the row or column and making that the length
+        of both sides. 
+    -   return a new perfect square array. Padded with zeros to make 
+        the perfect square matric possible
+'''
+def makePerfSquare(arr):
+    row = len(arr) #rows
+    col = len(arr[0]) #columns
+    if(row >  col):
+        newarr = np.zeros((row, row, 3), dtype = int)
+        for i in range(0, col):
+            for j in range(0,col):
+                for k in range(0,3):
+                    newarr[i][j][k] = arr[i][j][k] 
+        return newarr
+    else:
+        newarr = np.zeros((col, col, 3), dtype = int)        
+        for i in range(0, row):
+            for j in range(0,col):
+                for k in range(0,3):
+                    newarr[i][j][k] = arr[i][j][k] 
+        return newarr
+'''
+matrix_mult:
+    -   Receives an array
+    -   Creates a cypher array which will be used for matrix multiplication
+    -   Saves cypher array into its own list which will later be used for inversion (decryption)
+    -   applies matrix multiplication to image array and cypher array.
+    -   returns new encrypted image array 
 '''
 count = 0
-def matrix_mult(image):
+cypher_list = []
+def matrix_mult(arr):
     start = timer()
     global count
     global overallTimeElapsed
-    # Transforms image into a 1D array
-    d = image.flatten()
-    nx = len(image)
-    ny = len(image[0])
-    nz = len(image[0][0])
-    # Iterate through the 1D array and 
-    # encrypt each value
-    for i in range(0, image.size):
-        # d[i] = d[i]
-        d[i] = random.randint(0,255)
-    # Counter for images that have been processed
-    count += 1
-    # Reshaped 1D image into a matrix
-    encrypted_image_3d = d.reshape((nx,ny,nz))
+
+    cypher = np.random.random(arr.shape) # Cypher matrix of arr shape
+    cypher_list.append(cypher) # Appends cypher to cypher list for matrix inversion
+    result = np.zeros(arr.shape) # Cypher matrix of arr shape
+
+    a2 = arr.reshape(-1, arr.shape[1])
+    c2 = cypher.reshape(-1, cypher.shape[1])
+
+    # Matrix multiplication
+    res = np.dot(a2, c2.T)
+
+    # Reshape 2D matrix mutl into 3d Array
+    res3d = res.reshape(len(a2[0]),len(a2), 3)
 
     # Converts matrix back into an image, then saves the images
-    encrypted_image = Image.fromarray(encrypted_image_3d, 'RGB')    
+    encrypted_image = Image.fromarray(res3d, 'RGB')    
     encrypted_image.save('./dirty/%07d_encrypted_image.jpg' %count)
     end = timer()
     timeElapsed = end - start
     overallTimeElapsed += timeElapsed 
     print("Frame", count, "Encrypted in %.3f" %timeElapsed)
+
+    # Counter for images that have been processed
+    count += 1
 
 def encrypt():
   image_list = []
@@ -103,8 +157,13 @@ def encrypt():
 
   # Read all images from image_list and encrypts them
   for image in image_list:
-      img = misc.imread(image)    
-      matrix_mult(img)
+    img = misc.imread(image)    
+    isSquare = isPerfSquare(img)
+    if(isSquare):
+        print('Its a square.') 
+    else:  
+        sqrArray = makePerfSquare(img)
+        matrix_mult(sqrArray)
 
 '''
 maker:

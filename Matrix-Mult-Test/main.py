@@ -1,19 +1,9 @@
+from scipy import misc
+from PIL import Image
 import numpy as np
 import math
 
-aThree = np.array([
-                      [[1,2,3], [4,5,6], [7,8,9]]
-                    , [[10,11,12], [13,14,15], [16,17,18]]
-                    , [[19,20,21], [22,23,24], [25,26,27]]
-                    , [[19,20,21], [22,23,24], [25,26,27]]
-                 ])
-
-bThree = np.array([
-                      [[100,101,102,103], [104,105,106,0], [106,107,108,0],  [106,107,108,0]]
-                    , [[110,111,112,0], [113,114,115,0], [116,117, 118,0],  [106,107,108,0]]
-                    , [[119,120,121,0], [122,123,124,0], [125,124,125,0],  [106,107,108,0]]
-                    # , [[126,127,128,0], [129,130,131,0], [132,133,134,0]]
-                ])    
+image = misc.imread('test.png')
 
 '''
 isPerfSquare:
@@ -78,107 +68,31 @@ def matrix_mult(arr):
     # Matrix multiplication
     res = np.dot(a2, c2.T)
 
-    # Reshape 2D -> 3D 
-    res3d = res.reshape(3,-1, 3)
+    # Reshape 2D -> 3D
+    print(res.shape) 
+    res3d = res.reshape(len(a2[0]),len(a2), 3)
+    print(res3d.shape)
     return res3d
 
 '''
 Function Calls
 '''
-isSquare = isPerfSquare(aThree)  
+isSquare = isPerfSquare(image)  
 
 if(isSquare):
     print('Its a square.')
 else:
-    print(aThree)
+    # print(image)
     print('')
     print('Converting to perfect square..')    
     print('')    
-    sqrArray = makePerfSquare(aThree)
-    print(sqrArray)       
+    sqrArray = makePerfSquare(image)
+    # print(sqrArray)       
     print('')
     print('Multiplying the Matrices')
     print('')        
-    print(matrix_mult(aThree))      
+    encrypted_image = (matrix_mult(sqrArray))
+    final_img = Image.fromarray(encrypted_image, 'RGB')
+    # final_img.save('enc.png')
+    final_img.show()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-aOneD = aThree.flatten()
-# isPerfSquare = math.sqrt(len(aOneD)) - math.floor(math.sqrt(len(aOneD)))
-isPerfSquare = len(aOneD) % 1
-# print(isPerfSquare)
-
-
-if(isPerfSquare != 0):
-    newArrSize = int(math.pow(2, (math.floor(math.sqrt(len(aOneD))) + 1)))
-    newCol = int(math.sqrt(newArrSize))
-    newRow = int(math.sqrt(newArrSize))
-    newArr = np.zeros((newCol, newRow), dtype = int)
-
-    # for i in range(0, newCol):
-    #     for j in range(0, newRow):
-    #         for k in range(0, len(aOneD)):    
-                # newArr[i][j] = aOneD[k]
-    # print(newArr)
-    #         for i in range(0,3):
-    #             newArr.append(aThree[i][j][k])
-    # print(newArr)
-
-# Conver given 3D arrays into 2D arrays
-aTwo = aThree.transpose(2,0,1).reshape(-1,aThree.shape[1])
-bTwo = bThree.transpose(2,0,1).reshape(-1,bThree.shape[1])
-
-# Lengths of rows and colums for the given arrays
-aCol = len(aTwo[0])
-bCol = len(bTwo[0])
-aRow = len(aTwo)
-bRow = len(bTwo)
-
-# Create empty array of size aRow and bCol
-result = np.zeros((aRow, bCol), dtype = int)
-# print(aTwo)
-# print(bTwo)
-# print("aCol: ", aCol)
-# print("bRow: ", bRow)
-
-# Matrix multiplicaiton
-if aCol == bRow:
-    for i in range(0, aRow):
-        for j in range(0, bCol):
-            for k in range(0, aCol):
-                result[i][j] += aTwo[i][k] * bTwo[k][j] 
-    result_3d = result.reshape(np.roll(aThree.shape,1)).transpose(1,2,0)
-    print(result_3d)
-
-else:
-    print("")
-
-# Reshape our 2D matrix multiplication result into 3D array
