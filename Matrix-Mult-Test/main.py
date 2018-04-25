@@ -69,33 +69,22 @@ def makePerfSquare(arr):
 
 def matrix_mult(arr):
     cypher = np.random.random(arr.shape) # Cypher matrix of arr shape
-    aCol = len(arr[0])
-    bCol = len(cypher[0])
-    aRow = len(arr)
-    bRow = len(cypher)
+    result = np.zeros(arr.shape) # Cypher matrix of arr shape
 
-
-    a2 = arr.transpose(2,0,1).reshape(-1, arr.shape[1])
-    c2 = cypher.transpose(2,0,1).reshape(-1, cypher.shape[1])
-
-    r = np.zeros(arr.shape, dtype=int)
-    r2 =  r.transpose(2,0,1).reshape(-1, r.shape[1])
-    result_3d = r2.reshape(np.roll(r2.shape,1)).transpose(1,2,0)
+    a2 = arr.reshape(-1, arr.shape[1])
+    c2 = cypher.reshape(-1, cypher.shape[1])
     
-    print(result)
-    print(result_3d)
-
-    # for i in range(len(arr)):
-    #     for j in range(len(c2[0])):
-    #         for k in range(len(arr[0])):
-    #             result[i][j] += c2[i][k] * a2[k][j]
-    # result_3d = result.reshape(np.roll(result.shape,1)).transpose(1,2,0)    
-    # print(result_3d)
-    # for i in range(0, aRow):
-    #     for j in range(0, bCol):
-    #         for k in range(0, aCol):
-    #             result[i][j] += a2[i][k] * c2[k][j] 
-    # result_3d = r2.reshape(np.roll(r2.shape,1)).transpose(1,2,0)
+    # Matrix multiplication
+    print('Transposed Cypher')
+    print(c2.T)
+    print('Image Array')
+    print(a2)
+    print('')
+    print('RESULT') 
+    res = np.dot(a2, c2.T)
+    # fr = res.flatten()
+    # rfr = res.reshape((len(arr),len(arr[0]), len(arr[0][0])))
+    print(res)
 
 '''
 Function Calls
@@ -114,7 +103,7 @@ else:
     print('')
     print('Multiplying the Matrices')
     print('')        
-    matrix_mult(sqrArray)      
+    matrix_mult(aThree)      
 
 
 
