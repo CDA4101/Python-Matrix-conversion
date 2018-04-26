@@ -2,8 +2,7 @@ from scipy import misc
 from PIL import Image
 import numpy as np
 import math
-
-image = misc.imread('test.png')
+from numpy.linalg import inv
 
 '''
 isPerfSquare:
@@ -69,30 +68,42 @@ def matrix_mult(arr):
     res = np.dot(a2, c2.T)
 
     # Reshape 2D -> 3D
-    print(res.shape) 
     res3d = res.reshape(len(a2[0]),len(a2), 3)
-    print(res3d.shape)
     return res3d
+
+'''
+decrypt:
+    - todo
+'''
+def decrypt(image):
+    global cypher_list
+    cypher = np.asarray(cypher_list[0])
+    img = image[:2628,:2628, :3]
+    cypherRoll = np.rollaxis(cypher,2,0)
+    imgRoll = np.rollaxis(img,2,0)
+    cInv = inv(cypherRoll)
+    pinga = np.dot(imgRoll, cInv) 
+    print(pinga)
+
 
 '''
 Function Calls
 '''
+
+#Reading the image and making it a matrix
+image = misc.imread('test.png')
+enc_image = misc.imread('enc.png')
 isSquare = isPerfSquare(image)  
 
 if(isSquare):
     print('Its a square.')
 else:
-    # print(image)
-    print('')
-    print('Converting to perfect square..')    
-    print('')    
+    print('Converting to perfect square..')        
     sqrArray = makePerfSquare(image)
-    # print(sqrArray)       
-    print('')
     print('Multiplying the Matrices')
-    print('')        
     encrypted_image = (matrix_mult(sqrArray))
     final_img = Image.fromarray(encrypted_image, 'RGB')
-    # final_img.save('enc.png')
-    final_img.show()
+    final_img.save('enc.png')
+    print('Decrypting the frame.')
+    decrypt(enc_image)
 

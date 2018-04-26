@@ -9,9 +9,9 @@ import math
 import cv2 
 import os
 
-import pycuda.driver as cuda
-import pycuda.autoinit
-from pycuda.compiler import SourceModule
+# import pycuda.driver as cuda
+# import pycuda.autoinit
+# from pycuda.compiler import SourceModule
 
 '''
 Decorator to allow other functions to be exectue after one another
@@ -187,7 +187,7 @@ def video_maker(images, outimg=None, fps=24, size=None, is_color=True, format="m
             img = resize(img, size)
         vid.write(img)
     vid.release()
-    print('Video created.')
+    print('Video Encrypted.')
     return vid
 
 def maker():
