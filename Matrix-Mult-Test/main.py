@@ -82,8 +82,10 @@ def decrypt(image):
     cypherRoll = np.rollaxis(cypher,2,0)
     imgRoll = np.rollaxis(img,2,0)
     cInv = inv(cypherRoll)
+    print(imgRoll.shape)
+    print(cInv.shape)
     pinga = np.dot(imgRoll, cInv) 
-    print(pinga)
+    # print(pinga)
 
 
 '''

@@ -55,16 +55,16 @@ def framer():
     pathOut = './clean/'
     if not os.path.exists('./clean'):
       os.makedirs('./clean')
-    count = 1
+    framer_count = 1
     vidcap = cv2.VideoCapture(pathIn)
     success,image = vidcap.read()
     success = True
     while success:
-      vidcap.set(cv2.CAP_PROP_POS_MSEC,(count*45))  
+      vidcap.set(cv2.CAP_PROP_POS_MSEC,(framer_count*45))  
       success,image = vidcap.read()
-      print ('Frame ', count, ' Processed.')
-      cv2.imwrite( pathOut + "%07d_clean_image.jpg" % count, image)  
-      count += 1
+      print ('Frame ', framer_count, ' Processed.')
+      cv2.imwrite( pathOut + "%07d_clean_image.jpg" % framer_count, image)  
+      framer_count += 1
 
 '''
 isPerfSquare:
@@ -142,11 +142,19 @@ def matrix_mult(arr):
     end = timer()
     timeElapsed = end - start
     overallTimeElapsed += timeElapsed 
-    print("Frame", count, "Encrypted in %.3f" %timeElapsed)
+    print("Frame", count + 1, "Encrypted in %.3f" %timeElapsed)
 
     # Counter for images that have been processed
     count += 1
 
+'''
+Encrypt:
+    - given a file path, iterated through it and
+      call the matric mult function which encrypts the matrix
+    - Calls isSquare to verify if given matrix is a square
+    - Calls makePerfSquare if given array is not a perfect square
+    - Calls matrix_mult to encrypt the given matrix by a random generated key
+'''
 def encrypt():
   image_list = []
   if not os.path.exists('./dirty'):
@@ -167,7 +175,9 @@ def encrypt():
 
 '''
 maker:
-  - Todo
+  - Using OpenCV
+  - Read all the images from a give input file
+  - returns all the images into a video of mp4 file format
 '''
 def video_maker(images, outimg=None, fps=24, size=None, is_color=True, format="mp4v"):
     global overallTimeElapsed
@@ -195,7 +205,8 @@ def maker():
   for filename in glob.glob('dirty/*.jpg'):
       image_list.append(filename)
   image_list.sort()
-
+  print(len(cypher_list))
+  print(len(image_list))
   video_maker(image_list)
 
 
