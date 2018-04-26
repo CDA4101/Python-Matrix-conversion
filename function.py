@@ -8,10 +8,7 @@ import glob
 import math
 import cv2 
 import os
-
-# import pycuda.driver as cuda
-# import pycuda.autoinit
-# from pycuda.compiler import SourceModule
+from numba import vectorize, cuda
 
 '''
 Decorator to allow other functions to be exectue after one another
@@ -75,8 +72,6 @@ isPerfSquare:
 def isPerfSquare(arr):
     row = len(arr) #rows
     col = len(arr[0]) #columns
-    # print("Number of rows: ", row,'\n')
-    # print("Number of columns: ", col,'\n')
     rxc = row - col
     if(rxc != 0):
         return(False)
@@ -108,6 +103,11 @@ def makePerfSquare(arr):
                 for k in range(0,3):
                     newarr[i][j][k] = arr[i][j][k] 
         return newarr
+
+@vectorize(['float32(float32, float32)'], target='cuda')
+def mult(a, b):
+    return a * b
+
 '''
 matrix_mult:
     -   Receives an array
@@ -118,6 +118,7 @@ matrix_mult:
 '''
 count = 0
 cypher_list = []
+
 def matrix_mult(arr):
     start = timer()
     global count
@@ -129,9 +130,21 @@ def matrix_mult(arr):
 
     a2 = arr.reshape(-1, arr.shape[1])
     c2 = cypher.reshape(-1, cypher.shape[1])
-
+        
+    # a2f = np.asarray(a2,dtype="float32")
+    # c2f = np.asarray(c2,dtype="float32")
+    
     # Matrix multiplication
+    # res = mult(a2f, c2f)
     res = np.dot(a2, c2.T)
+    # res = np.zeros(a2.shape, dtype="float32")
+    # for i in range(len(a2)):
+    #     for j in range(len(c2[0])):
+    #         for k in range(len(c2)):
+    #             a = a2[i][k]
+    #             b = c2t[k][j]
+    #             res[i][j] += mult(np.asarray(a, dtype="float32"),np.asarray(b, dtype="float32"))
+    # res = mult(np.asarray(a2, dtype="float32"),c2t)
 
     # Reshape 2D matrix mutl into 3d Array
     res3d = res.reshape(len(a2[0]),len(a2), 3)
@@ -146,6 +159,7 @@ def matrix_mult(arr):
 
     # Counter for images that have been processed
     count += 1
+    return encrypted_image
 
 '''
 Encrypt:
@@ -205,8 +219,6 @@ def maker():
   for filename in glob.glob('dirty/*.jpg'):
       image_list.append(filename)
   image_list.sort()
-  print(len(cypher_list))
-  print(len(image_list))
   video_maker(image_list)
 
 
