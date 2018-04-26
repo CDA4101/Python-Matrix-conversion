@@ -104,9 +104,15 @@ def makePerfSquare(arr):
                     newarr[i][j][k] = arr[i][j][k] 
         return newarr
 
-@vectorize(['float32(float32, float32)'], target='cuda')
-def mult(a, b):
-    return a * b
+
+'''
+Parallel process
+    - Receives two float arrays and applies matrix multiplication
+'''
+#@vectorize(['float32(float32, float32)'], target='cuda')
+# def mult(a, b):
+    #res = (np.asarray(a, dtype="float32") * np.asarray(b, dtype="float32"))
+    #return res
 
 '''
 matrix_mult:
@@ -130,20 +136,21 @@ def matrix_mult(arr):
 
     a2 = arr.reshape(-1, arr.shape[1])
     c2 = cypher.reshape(-1, cypher.shape[1])
-        
-    # a2f = np.asarray(a2,dtype="float32")
-    # c2f = np.asarray(c2,dtype="float32")
     
-    # Matrix multiplication
-    # res = mult(a2f, c2f)
+    #Dot product / Matrux multiplication using NumPy, 1000x faster than iterative approach
     res = np.dot(a2, c2.T)
-    # res = np.zeros(a2.shape, dtype="float32")
+
+    '''
+    For loop matrix multiplication for 3d array
+        - Calls the mult function which runs in parallel for every pixel in 
+          the array and Cipher 
+    '''
     # for i in range(len(a2)):
     #     for j in range(len(c2[0])):
     #         for k in range(len(c2)):
     #             a = a2[i][k]
     #             b = c2t[k][j]
-    #             res[i][j] += mult(np.asarray(a, dtype="float32"),np.asarray(b, dtype="float32"))
+    #             res[i][j] += mult(a,b)
     # res = mult(np.asarray(a2, dtype="float32"),c2t)
 
     # Reshape 2D matrix mutl into 3d Array
